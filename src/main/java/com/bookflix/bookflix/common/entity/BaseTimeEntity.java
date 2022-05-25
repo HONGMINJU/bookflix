@@ -1,4 +1,4 @@
-package com.bookflix.bookflix.common;
+package com.bookflix.bookflix.common.entity;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
