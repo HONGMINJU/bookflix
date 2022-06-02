@@ -37,4 +37,9 @@ public class Review extends BaseTimeEntity {
         this.score = score;
         this.contents = contents;
     }
+
+    public void updateReview(int score, String contents){
+        this.score = score;
+        this.contents = contents;
+    }
 }
