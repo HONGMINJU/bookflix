@@ -19,7 +19,7 @@ import static com.bookflix.bookflix.common.response.BaseResponseStatus.INVALID_U
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
@@ -48,7 +48,7 @@ public class UserController {
         Long userId = jwtService.getUserIdx();
         if (userId != id)
             throw new BaseException(INVALID_USERID);
-        GetUser getUserRes = userService.findById(id);
+        userService.updateUser(id, putUserReq);
         return new BaseResponse<>(null);
     }
 
