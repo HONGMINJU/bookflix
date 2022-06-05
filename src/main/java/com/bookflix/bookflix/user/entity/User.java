@@ -5,6 +5,7 @@ import com.bookflix.bookflix.library.entity.NearLibrary;
 import com.bookflix.bookflix.user.entity.enumType.Gender;
 import com.bookflix.bookflix.user.entity.enumType.SocialType;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,7 +23,6 @@ public class User extends BaseTimeEntity {
     @Id
     private Long id;
 
-    @Column(nullable = false)
     private String nickname;
 
     @Column(nullable = false)
@@ -46,10 +46,8 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private float latitude;
 
-    @Column(nullable = false)
     private String inhaId;
 
-    @Column(nullable = false)
     private String inhaPwd;
 
     @OneToMany(mappedBy = "user")
@@ -61,9 +59,38 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user")
     private List<History> historyList = new ArrayList<>();
 
-    public User(String oauthId, SocialType socialType){
+
+    public static User createDefaultUser(String oauthId, SocialType socialType){
+        return User.builder()
+                .nickname("")
+                .oauthId(oauthId)
+                .socialType(socialType)
+                .gender(Gender.MALE)
+                .age(20)
+                .region(11)
+                .longitude(126.6535F)
+                .latitude(37.4500F)
+                .inhaId("")
+                .inhaPwd("")
+                .build();
+    }
+
+    @Builder
+    public User(String nickname, String oauthId, SocialType socialType, Gender gender, int age,
+                int region, float longitude, float latitude, String inhaId, String inhaPwd){
+        this.nickname = nickname;
         this.oauthId = oauthId;
         this.socialType = socialType;
+        this.gender = gender;
+        this.age = age;
+        this.region = region;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.inhaId = inhaId;
+        this.inhaPwd = inhaPwd;
+        this.libraryList = new ArrayList<>();
+        this.recommendList = new ArrayList<>();
+        this.historyList = new ArrayList<>();
     }
 
     public void updateInfo(String nickName, Gender gender, int age, int region, float longitude, float latitude) {

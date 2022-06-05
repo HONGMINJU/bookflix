@@ -10,6 +10,8 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    boolean existsBySocialTypeAndOauthId(SocialType socialType, String oauthId);
+    //boolean existsBySocialTypeAndOauthId(SocialType socialType, String oauthId);
+    boolean existsByOauthId(String oauthId);
+    boolean existsById(Long userId);
     Optional<User> findUserBySocialTypeAndOauthId(SocialType socialType, String oauthId);
 }
