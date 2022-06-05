@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
 public class OauthServiceImpl implements OauthService{
 
@@ -21,6 +20,31 @@ public class OauthServiceImpl implements OauthService{
     private final OauthServiceUtil oauthServiceUtil;
 
     private final JwtService jwtService;
+
+    @Override
+    public LoginRes loginTest(String oauthId) {
+
+        String jwt = "";
+        Boolean isNew = true;
+        Long userId = 0L;
+        SocialType socialTypeEnum = SocialType.KAKAO;
+        LoginRes loginRes = null;
+        if (userRepository.existsByOauthId(oauthId)) {
+
+            Optional<User> user = userRepository.findUserBySocialTypeAndOauthId(socialTypeEnum, oauthId);
+            String nickname = user.get().getNickname();
+            userId = user.get().getId();
+            if (!nickname.equals(""))
+                isNew = false;
+        }
+        else {
+            //db에 oauthid 존재하지 않는경우 디비에 삽입하고 리턴
+            User saveUser = userRepository.save(User.createDefaultUser(oauthId, SocialType.KAKAO));
+            userId = saveUser.getId();
+        }
+        jwt = jwtService.createJwt(userId, "kakao", oauthId);
+        return new LoginRes(jwt, isNew, userId);
+    }
 
     @Override
     public LoginRes socialLogin(String socialType, String accessToken) {
@@ -41,25 +65,20 @@ public class OauthServiceImpl implements OauthService{
             socialTypeEnum = SocialType.NAVER;
         }
 
-        if (userRepository.existsBySocialTypeAndOauthId(socialTypeEnum, oauthId)) {
+        if (userRepository.existsByOauthId(oauthId)) {
 
             Optional<User> user = userRepository.findUserBySocialTypeAndOauthId(socialTypeEnum, oauthId);
             String nickname = user.get().getNickname();
             userId = user.get().getId();
-            jwt = jwtService.createJwt(userId, socialType, oauthId);
-
-            if (nickname.equals(""))
-                isNew = true;
-            else
+            if (!nickname.equals(""))
                 isNew = false;
         }
         else {
             //db에 oauthid 존재하지 않는경우 디비에 삽입하고 리턴
-            User user = userRepository.save(new User(oauthId, socialTypeEnum));
-            jwt = jwtService.createJwt(user.getId(), socialType, oauthId);
-            isNew = false;
+            User user = userRepository.save(User.createDefaultUser(oauthId, socialTypeEnum));
             userId = user.getId();
         }
+        jwt = jwtService.createJwt(userId, socialType, oauthId);
         return new LoginRes(jwt, isNew, userId);
     }
 }

@@ -12,11 +12,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
-import static com.bookflix.bookflix.common.response.BaseResponseStatus.EMPTY_JWT;
-import static com.bookflix.bookflix.common.response.BaseResponseStatus.INVALID_JWT;
+import static com.bookflix.bookflix.common.response.BaseResponseStatus.*;
 
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
 public class JwtService {
 
@@ -44,7 +42,7 @@ public class JwtService {
      */
     public String getJwt() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        return request.getHeader("X-ACCESS-TOKEN");
+        return request.getHeader("Authorization");
     }
 
     /*
@@ -56,8 +54,11 @@ public class JwtService {
 
         //1. JWT 추출
         String accessToken = getJwt();
-        if (accessToken == null || accessToken.length() == 0)
+        if (accessToken == null ||accessToken.length() == 0)
             throw new BaseException(EMPTY_JWT);
+        if (!accessToken.startsWith("Bearer"))
+            throw new BaseException(BEARER_NOT_FOUND);
+        accessToken = accessToken.replace("Bearer", "");
 
         // 2. JWT parsing
         Jws<Claims> claims = Jwts.parser()
@@ -74,6 +75,8 @@ public class JwtService {
         String accessToken = getJwt();
         if (accessToken == null || accessToken.length() == 0)
             throw new BaseException(EMPTY_JWT);
+        if (!accessToken.startsWith("Bearer"))
+            throw new BaseException(BEARER_NOT_FOUND);
 
         // 2. JWT parsing
         Jws<Claims> claims = Jwts.parser()
@@ -90,6 +93,8 @@ public class JwtService {
         String accessToken = getJwt();
         if (accessToken == null || accessToken.length() == 0)
             throw new BaseException(EMPTY_JWT);
+        if (!accessToken.startsWith("Bearer"))
+            throw new BaseException(BEARER_NOT_FOUND);
 
         // 2. JWT parsing
         Jws<Claims> claims = Jwts.parser()
