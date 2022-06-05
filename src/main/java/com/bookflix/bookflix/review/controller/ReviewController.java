@@ -48,6 +48,6 @@ public class ReviewController {
     public BaseResponse<PostReviewRes> deleteReview(@PathVariable("id") Long reviewId) {
         Long userId = jwtService.getUserIdx();
         reviewService.deleteReview(userId, reviewId);
-        return new BaseResponse<>(null);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS);
     }
 }
