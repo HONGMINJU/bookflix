@@ -1,9 +1,11 @@
 package com.bookflix.bookflix.review.controller;
 
 import com.bookflix.bookflix.common.response.BaseResponse;
+import com.bookflix.bookflix.common.response.BaseResponseStatus;
 import com.bookflix.bookflix.common.service.JwtService;
 import com.bookflix.bookflix.review.dto.request.PostReviewReq;
 import com.bookflix.bookflix.review.dto.request.PutReviewReq;
+import com.bookflix.bookflix.review.dto.response.GetReviewRes;
 import com.bookflix.bookflix.review.dto.response.PostReviewRes;
 import com.bookflix.bookflix.review.service.ReviewService;
 import com.bookflix.bookflix.user.dto.response.PostUserRes;
@@ -21,6 +23,13 @@ public class ReviewController {
 
     private final JwtService jwtService;
 
+    @GetMapping("/{id}")
+    public BaseResponse<GetReviewRes> getReview(@PathVariable("id") Long reviewId) {
+        Long userId = jwtService.getUserIdx();
+        GetReviewRes getReviewRes = reviewService.getReview(userId, reviewId);
+        return new BaseResponse<>(getReviewRes);
+    }
+
     @PostMapping("")
     public BaseResponse<PostReviewRes> postReview(@Valid @RequestBody PostReviewReq postReviewReq) {
         Long userId = jwtService.getUserIdx();
@@ -29,9 +38,16 @@ public class ReviewController {
     }
 
     @PutMapping("/{id}")
-    public BaseResponse<PostReviewRes> postReview(@PathVariable("id") Long id, @Valid @RequestBody PutReviewReq putReviewReq) {
+    public BaseResponse<String> putReview(@PathVariable("id") Long reviewId, @Valid @RequestBody PutReviewReq putReviewReq) {
         Long userId = jwtService.getUserIdx();
-        reviewService.updateReview(userId, id, putReviewReq);
+        reviewService.updateReview(userId, reviewId, putReviewReq);
+        return new BaseResponse<>(BaseResponseStatus.SUCCESS);
+    }
+
+    @DeleteMapping("/{id}")
+    public BaseResponse<PostReviewRes> deleteReview(@PathVariable("id") Long reviewId) {
+        Long userId = jwtService.getUserIdx();
+        reviewService.deleteReview(userId, reviewId);
         return new BaseResponse<>(null);
     }
 }
