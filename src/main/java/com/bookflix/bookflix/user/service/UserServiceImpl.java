@@ -40,22 +40,40 @@ public class UserServiceImpl implements UserService {
         return GetUser.of(user);
     }
 
+    private static double distance(double lat1, double lon1, double lat2, double lon2) {
+
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515 * 1.609344;
+        return (dist);
+    }
+
+    private static double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    private static double rad2deg(double rad) {
+        return (rad * 180 / Math.PI);
+    }
+
     public void setNearLibraryList(User user){
         user.clearNearLibrary();
 
         float longitude = user.getLongitude();
         float latitude = user.getLatitude();
         List<Library> allLibraryList = libraryRepository.findAll();
-        TreeMap<Float, Long> distanceMap = new TreeMap<Float, Long>();
+        TreeMap<Double, Long> distanceMap = new TreeMap<Double, Long>();
 
         for(Library library : allLibraryList){
-            float distance = (longitude - library.getLongitude()) * (longitude - library.getLongitude())
-                        + (latitude - library.getLatitude()) * (latitude - library.getLatitude());
+            double distance = distance(latitude, longitude, library.getLatitude(), library.getLongitude());
             distanceMap.put(distance, library.getId());
         }
         for (int i = 0; i< 3; i++) {
-            Map.Entry<Float, Long> entry = distanceMap.firstEntry();
-            nearLibraryService.createAndAddNearLibrary(user, entry.getValue());
+            Map.Entry<Double, Long> entry = distanceMap.firstEntry();
+            nearLibraryService.createAndAddNearLibrary(entry.getKey(), user, entry.getValue());
             distanceMap.remove(entry.getKey());
         }
     }

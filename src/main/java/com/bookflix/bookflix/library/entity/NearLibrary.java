@@ -16,6 +16,8 @@ public class NearLibrary {
     @Id
     private Long id;
 
+    private double distance;
+
     @ManyToOne
     @JoinColumn(name = "USER_ID")
     private User user;
@@ -24,7 +26,8 @@ public class NearLibrary {
     @JoinColumn(name = "LIBRARY_ID")
     private Library library;
 
-    public NearLibrary(User user, Library library){
+    public NearLibrary(double distance, User user, Library library){
+        this.distance = distance;
         this.user = user;
         this.library = library;
     }

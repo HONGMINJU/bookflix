@@ -18,9 +18,9 @@ public class NearLibraryServiceImpl implements NearLibraryService{
     private final LibraryRepository libraryRepository;
 
     @Override
-    public void createAndAddNearLibrary(User user, Long libraryId){
+    public void createAndAddNearLibrary(double distance, User user, Long libraryId){
         Library library = libraryRepository.findById(libraryId).orElseThrow();
-        NearLibrary nearLibrary = nearLibraryRepository.save(new NearLibrary(user, library));
+        NearLibrary nearLibrary = nearLibraryRepository.save(new NearLibrary(distance, user, library));
         user.addNearLibrary(nearLibrary);
     }
 }
