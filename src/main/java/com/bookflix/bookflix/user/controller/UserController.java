@@ -2,6 +2,7 @@ package com.bookflix.bookflix.user.controller;
 
 import com.bookflix.bookflix.common.response.BaseResponseResultStatus;
 import com.bookflix.bookflix.common.response.BaseResponseStatus;
+import com.bookflix.bookflix.library.service.LibraryService;
 import com.bookflix.bookflix.user.dto.request.PutUserReq;
 import com.bookflix.bookflix.user.dto.response.GetBorrowHistoryRes;
 import com.bookflix.bookflix.user.dto.response.GetReadHistoryRes;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static com.bookflix.bookflix.common.response.BaseResponseStatus.INVALID_USERID;
