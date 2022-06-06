@@ -9,6 +9,6 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetBorrowHistoryRes {
-    private List<BorrowHistoryInfo> bookList;
+public class GetReadHistoryRes {
+    private List<ReadHistoryInfo> bookList;
 }

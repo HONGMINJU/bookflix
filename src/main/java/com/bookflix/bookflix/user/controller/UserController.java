@@ -1,8 +1,10 @@
 package com.bookflix.bookflix.user.controller;
 
 import com.bookflix.bookflix.common.response.BaseResponseResultStatus;
+import com.bookflix.bookflix.common.response.BaseResponseStatus;
 import com.bookflix.bookflix.user.dto.request.PutUserReq;
 import com.bookflix.bookflix.user.dto.response.GetBorrowHistoryRes;
+import com.bookflix.bookflix.user.dto.response.GetReadHistoryRes;
 import com.bookflix.bookflix.user.service.HistoryService;
 import com.bookflix.bookflix.common.response.BaseException;
 import com.bookflix.bookflix.common.response.BaseResponse;
@@ -17,7 +19,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import java.util.Map;
+
 import static com.bookflix.bookflix.common.response.BaseResponseStatus.INVALID_USERID;
+import static com.bookflix.bookflix.common.response.BaseResponseStatus.SUCCESS;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,21 +50,29 @@ public class UserController {
         return new BaseResponse<>(getUserRes);
     }
 
-//    @GetMapping("/{id}/books/read")
-//    public BaseResponse<GetUser> getUserReadHistory(@PathVariable("id") Long id) {
-//        Long userId = jwtService.getUserIdx();
-//        if (userId != id)
-//            throw new BaseException(INVALID_USERID);
-//        GetUser getUserRes = userService.findById(id);
-//        return new BaseResponse<>(getUserRes);
-//    }
-
     @GetMapping("/{id}/books/borrow")
     public BaseResponse<GetBorrowHistoryRes> getUserBorrowHistory(@PathVariable("id") Long id) {
         Long userId = jwtService.getUserIdx();
         if (userId != id)
             throw new BaseException(INVALID_USERID);
         return new BaseResponse<>(historyService.getBorrowHistory(userId));
+    }
+
+    @GetMapping("/{id}/books/read")
+    public BaseResponse<GetReadHistoryRes> getUserReadHistory(@PathVariable("id") Long id) {
+        Long userId = jwtService.getUserIdx();
+        if (userId != id)
+            throw new BaseException(INVALID_USERID);
+        return new BaseResponse<>(historyService.getReadHistory(userId));
+    }
+
+    @PostMapping("/{id}/books/read")
+    public BaseResponse<BaseResponseStatus> postUserReadHistory(@PathVariable("id") Long id, @RequestBody Map<String, String> isbnInfo) {
+        Long userId = jwtService.getUserIdx();
+        if (userId != id)
+            throw new BaseException(INVALID_USERID);
+        historyService.postReadHistory(userId, isbnInfo.get("isbn"));
+        return new BaseResponse<>(SUCCESS);
     }
 
     @PutMapping("/{id}")
