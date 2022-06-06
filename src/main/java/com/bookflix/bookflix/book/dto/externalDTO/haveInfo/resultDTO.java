@@ -1,4 +1,4 @@
-package com.bookflix.bookflix.book.dto.xml.haveInfo;
+package com.bookflix.bookflix.book.dto.externalDTO.haveInfo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,13 +12,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @Getter
 @Setter
-@XmlRootElement(name = "request")
+@XmlRootElement(name = "result")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class requestDTO {
+public class resultDTO {
 
-    @XmlElement(name = "isbn13")
-    private String isbn13;
+    @XmlElement(name = "hasBook")
+    private String hasBook;
 
-    @XmlElement(name = "libCode")
-    private String libCode;
+    @XmlElement(name = "loanAvailable")
+    private String loanAvailable;
 }

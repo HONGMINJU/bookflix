@@ -1,4 +1,4 @@
-package com.bookflix.bookflix.book.dto.xml.haveInfo;
+package com.bookflix.bookflix.book.dto.externalDTO.haveInfo;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,8 +15,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class responseDTO {
 
     @XmlElement(name = "request")
-    private com.bookflix.bookflix.book.dto.xml.haveInfo.requestDTO requestDTO;
+    private com.bookflix.bookflix.book.dto.externalDTO.haveInfo.requestDTO requestDTO;
 
     @XmlElement(name = "result")
-    private com.bookflix.bookflix.book.dto.xml.haveInfo.resultDTO resultDTO;
+    private com.bookflix.bookflix.book.dto.externalDTO.haveInfo.resultDTO resultDTO;
 }
