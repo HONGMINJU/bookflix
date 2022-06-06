@@ -4,6 +4,7 @@ import com.bookflix.bookflix.book.dto.response.GetBookInfoRes;
 import com.bookflix.bookflix.book.dto.response.GetBookRes;
 import com.bookflix.bookflix.book.dto.response.LibraryInfo;
 import com.bookflix.bookflix.book.dto.response.SearchBookRes;
+import com.bookflix.bookflix.book.dto.xml.haveInfo.responseDTO;
 import com.bookflix.bookflix.book.entity.Book;
 import com.bookflix.bookflix.book.repository.BookRepository;
 import com.bookflix.bookflix.common.response.BaseException;
@@ -13,7 +14,9 @@ import com.bookflix.bookflix.library.repository.NearLibraryRepository;
 import com.bookflix.bookflix.user.entity.User;
 import com.bookflix.bookflix.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,14 +26,22 @@ import java.util.stream.Collectors;
 @Service
 public class BookServiceImpl implements BookService{
 
+    @Value("${APIKey}")
+    private String APIKey;
+
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
     private final NearLibraryRepository nearLibraryRepository;
 
     public LibraryInfo getLibraryInfo(NearLibrary nearLibrary, String isbn){
-        // TODO : 도서관 정보나루 연결
-        //http://data4library.kr/api/bookExist?authKey=[발급받은키]&libCode=[도서관코드]&isbn13=9788934939603
-        return LibraryInfo.of(nearLibrary, false, false);
+        String URL = "http://data4library.kr/api/bookExist?authKey=" + APIKey
+                + "&libCode=" + Integer.toString(nearLibrary.getLibrary().getCode())
+                + "&isbn13="+isbn;
+        RestTemplate restTemplate = new RestTemplate();
+        responseDTO responseDTO = restTemplate.getForObject(URL, responseDTO.class);
+        boolean have = (responseDTO.getResultDTO().getHasBook().equals("Y")? true : false);
+        boolean canBorrow = (responseDTO.getResultDTO().getLoanAvailable().equals("Y")? true : false);
+        return LibraryInfo.of(nearLibrary, have, canBorrow);
     }
 
     @Override
