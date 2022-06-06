@@ -51,6 +51,7 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
+    @Transactional
     public void updateReview(Long userId, Long reviewId, PutReviewReq putReviewReq){
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new BaseException(BaseResponseStatus.USER_NOT_EXIST));
