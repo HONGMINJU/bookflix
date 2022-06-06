@@ -1,6 +1,7 @@
 package com.bookflix.bookflix.review.controller;
 
 import com.bookflix.bookflix.common.response.BaseResponse;
+import com.bookflix.bookflix.common.response.BaseResponseResultStatus;
 import com.bookflix.bookflix.common.response.BaseResponseStatus;
 import com.bookflix.bookflix.common.service.JwtService;
 import com.bookflix.bookflix.review.dto.request.PostReviewReq;
@@ -38,14 +39,14 @@ public class ReviewController {
     }
 
     @PutMapping("/{id}")
-    public BaseResponse<String> putReview(@PathVariable("id") Long reviewId, @Valid @RequestBody PutReviewReq putReviewReq) {
+    public BaseResponse<BaseResponseResultStatus> putReview(@PathVariable("id") Long reviewId, @Valid @RequestBody PutReviewReq putReviewReq) {
         Long userId = jwtService.getUserIdx();
         reviewService.updateReview(userId, reviewId, putReviewReq);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS);
     }
 
     @DeleteMapping("/{id}")
-    public BaseResponse<PostReviewRes> deleteReview(@PathVariable("id") Long reviewId) {
+    public BaseResponse<BaseResponseResultStatus> deleteReview(@PathVariable("id") Long reviewId) {
         Long userId = jwtService.getUserIdx();
         reviewService.deleteReview(userId, reviewId);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS);
