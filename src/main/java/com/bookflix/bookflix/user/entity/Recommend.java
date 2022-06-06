@@ -1,6 +1,7 @@
 package com.bookflix.bookflix.user.entity;
 
 import com.bookflix.bookflix.book.entity.Book;
+import com.bookflix.bookflix.user.entity.enumType.BookStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,4 +25,9 @@ public class Recommend {
     @ManyToOne
     @JoinColumn(name = "ISBN")
     private Book book;
+
+    public Recommend(User user, Book book){
+        this.user = user;
+        this.book = book;
+    }
 }

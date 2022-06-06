@@ -1,10 +1,11 @@
 package com.bookflix.bookflix.book.service;
 
+import com.bookflix.bookflix.book.dto.externalDTO.recommendList.ISBNListDTO;
 import com.bookflix.bookflix.book.dto.response.GetBookInfoRes;
 import com.bookflix.bookflix.book.dto.response.GetBookRes;
 import com.bookflix.bookflix.book.dto.response.LibraryInfo;
 import com.bookflix.bookflix.book.dto.response.SearchBookRes;
-import com.bookflix.bookflix.book.dto.xml.haveInfo.responseDTO;
+import com.bookflix.bookflix.book.dto.externalDTO.haveInfo.responseDTO;
 import com.bookflix.bookflix.book.entity.Book;
 import com.bookflix.bookflix.book.repository.BookRepository;
 import com.bookflix.bookflix.common.response.BaseException;
@@ -15,7 +16,12 @@ import com.bookflix.bookflix.user.entity.User;
 import com.bookflix.bookflix.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -28,6 +34,8 @@ public class BookServiceImpl implements BookService{
 
     @Value("${APIKey}")
     private String APIKey;
+
+    private static final String RECOMMEND_URL = "http://3.39.119.118:5000/recommend";
 
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
@@ -42,6 +50,17 @@ public class BookServiceImpl implements BookService{
         boolean have = (responseDTO.getResultDTO().getHasBook().equals("Y")? true : false);
         boolean canBorrow = (responseDTO.getResultDTO().getLoanAvailable().equals("Y")? true : false);
         return LibraryInfo.of(nearLibrary, have, canBorrow);
+    }
+
+    public List<String> getISBNListFromML(List<String> isbnList) {
+        // body 설정
+        MultiValueMap<String, List<String>> params = new LinkedMultiValueMap<>();
+        params.add("isbn", isbnList);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ISBNListDTO isbnListDTO = restTemplate.postForObject(RECOMMEND_URL, params, ISBNListDTO.class);
+
+        return isbnListDTO.getIsbn();
     }
 
     @Override
@@ -63,5 +82,13 @@ public class BookServiceImpl implements BookService{
             libraryInfoList.add(getLibraryInfo(nearLibrary, isbn));
         }
         return GetBookRes.of(book, libraryInfoList);
+    }
+
+    @Override
+    public List<Book> getBookRecommendList(List<String> isbnList){
+        List<Book> bookList = new ArrayList<>();
+        List<String> recommendISBNList = getISBNListFromML(isbnList);
+        // TODO : recommendISBNList 잘 되는 거 확인했음 => book list로 만들 차례임
+        return bookList;
     }
 }

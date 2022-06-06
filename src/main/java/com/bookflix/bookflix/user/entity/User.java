@@ -110,7 +110,15 @@ public class User extends BaseTimeEntity {
         this.historyList.add(history);
     }
 
+    public void addRecommend(Recommend recommend) {
+        this.recommendList.add(recommend);
+    }
+
     public void clearNearLibrary(){
         this.libraryList.clear();
+    }
+
+    public void clearRecommend(){
+        this.recommendList.clear();
     }
 }

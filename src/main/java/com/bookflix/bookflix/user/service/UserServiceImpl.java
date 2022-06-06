@@ -2,8 +2,6 @@ package com.bookflix.bookflix.user.service;
 
 import com.bookflix.bookflix.common.response.BaseException;
 import com.bookflix.bookflix.common.response.BaseResponseStatus;
-import com.bookflix.bookflix.library.entity.Library;
-import com.bookflix.bookflix.library.repository.LibraryRepository;
 import com.bookflix.bookflix.library.service.NearLibraryService;
 import com.bookflix.bookflix.user.dto.request.PostUserReq;
 import com.bookflix.bookflix.user.dto.request.PutUserReq;
@@ -15,21 +13,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    private final LibraryRepository libraryRepository;
-
     private final NearLibraryService nearLibraryService;
 
     private final HistoryService historyService;
+
+    private final RecommendService recommendService;
+
+    
 
     @Override
     public GetUser findById(Long id){
@@ -54,7 +50,9 @@ public class UserServiceImpl implements UserService {
         // libraryList 갱신
         nearLibraryService.setNearLibraryList(user);
 
-        // TODO : recommendList 갱신
+        // recommendList 갱신
+        recommendService.setRecommendList(user, postUserReq.getBookList());
+
         return PostUserRes.of(user);
     }
 

@@ -72,5 +72,6 @@ public class HistoryServiceImpl implements HistoryService {
         Book book = bookRepository.findById(isbn)
                 .orElseThrow(()-> new BaseException(BaseResponseStatus.BOOK_NOT_EXIST));
         History history = historyRepository.save(new History(user, book));
+        // TODO : 읽은 책 목록 수정했으니까 recommend refresh해야함
     }
 }
