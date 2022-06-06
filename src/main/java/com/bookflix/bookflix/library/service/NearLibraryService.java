@@ -6,4 +6,6 @@ import com.bookflix.bookflix.user.entity.User;
 public interface NearLibraryService {
 
     public void createAndAddNearLibrary(double distance, User user, Long libraryId);
+    public void clearNearLibrary(User user);
+    public void setNearLibraryList(User user);
 }
