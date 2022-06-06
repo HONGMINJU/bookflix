@@ -27,6 +27,8 @@ public class LibraryInfo {
         return LibraryInfo.builder()
                 .name(nearLibrary.getLibrary().getName())
                 .distance(nearLibrary.getDistance())
+                .have(have)
+                .canBorrow(canBorrow)
                 .build();
     }
 }
