@@ -19,7 +19,7 @@ public class GlobalExceptionAdvisor {
     }
 
     @ExceptionHandler(value = {JwtException.class})
-    protected BaseResponse<String> handleJwtException() {
+    protected BaseResponse<String> handleJwtException(Exception e) {
         return new BaseResponse<>(BaseResponseStatus.INVALID_JWT);
     }
 
