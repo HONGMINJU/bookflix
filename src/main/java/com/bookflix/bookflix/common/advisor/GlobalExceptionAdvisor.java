@@ -29,7 +29,9 @@ public class GlobalExceptionAdvisor {
     }
 
     @ExceptionHandler(value = {Exception.class})
-    protected BaseResponse<String> handleException() {
+    protected BaseResponse<String> handleException(Exception e) {
+        System.out.println("e.getMessage() = " + e.getMessage());
+        e.printStackTrace();
         return new BaseResponse<>(SERVER_ERROR);
     }
 }
