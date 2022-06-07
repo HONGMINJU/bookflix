@@ -1,12 +1,16 @@
 package com.bookflix.bookflix.book.controller;
 
 import com.bookflix.bookflix.book.dto.response.GetBookRes;
+import com.bookflix.bookflix.book.dto.response.GetSimilarBookListRes;
 import com.bookflix.bookflix.book.dto.response.SearchBookRes;
 import com.bookflix.bookflix.book.service.BookService;
 import com.bookflix.bookflix.common.response.BaseResponse;
 import com.bookflix.bookflix.common.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -21,6 +25,11 @@ public class BookController {
     @GetMapping("")
     public BaseResponse<SearchBookRes> searchBooks(@RequestParam("keyword") String keyword){
         return new BaseResponse<>(bookService.searchBooks(keyword));
+    }
+
+    @GetMapping("/similar")
+    public BaseResponse<GetSimilarBookListRes> getSimilarBookList(@RequestBody Map<String, List<String>> isbnInfo){
+        return new BaseResponse<>(bookService.getSimilarBookList(isbnInfo.get("ISBNList")));
     }
 
     @GetMapping("/{isbn}")

@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -32,6 +33,7 @@ public class BookServiceImpl implements BookService{
     private String APIKey;
 
     private static final String RECOMMEND_URL = "http://3.39.119.118:5000/recommend";
+    private static final String SIMILAR_URL = "http://3.39.119.118:5000/similar";
 
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
@@ -55,6 +57,17 @@ public class BookServiceImpl implements BookService{
 
         RestTemplate restTemplate = new RestTemplate();
         ISBNListDTO isbnListDTO = restTemplate.postForObject(RECOMMEND_URL, params, ISBNListDTO.class);
+
+        return isbnListDTO.getIsbn();
+    }
+
+    public List<String> getSimilarISBNListFromML(List<String> isbnList) {
+        // body 설정
+        MultiValueMap<String, List<String>> params = new LinkedMultiValueMap<>();
+        params.add("isbn", isbnList);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ISBNListDTO isbnListDTO = restTemplate.postForObject(SIMILAR_URL, params, ISBNListDTO.class);
 
         return isbnListDTO.getIsbn();
     }
@@ -83,25 +96,32 @@ public class BookServiceImpl implements BookService{
     @Override
     @Transactional
     public Book postBook(String isbn){
-        System.out.println("isbn = " + isbn);
+        System.out.println("--------------------------------도서관 조회----------------------------------------");
         String URL = "http://data4library.kr/api/srchDtlList?authKey=" + APIKey + "&isbn13=" + isbn;
         RestTemplate restTemplate = new RestTemplate();
         BookInfoResponseDTO responseDTO = restTemplate.getForObject(URL, BookInfoResponseDTO.class);
         return bookRepository.save(Book.of(responseDTO));
     }
 
-//    @Override
-//    public GetSimilarBookListRes getSimilarBookList(List<String> isbnList){
-//
-//    }
+    @Override
+    public GetSimilarBookListRes getSimilarBookList(List<String> isbnList){
+        List<String> similarISBNList = getSimilarISBNListFromML(isbnList);
+        List<Book> bookList = new ArrayList<>();
+        for(String similarISBN : similarISBNList) {
+            bookRepository.findById(similarISBN).ifPresentOrElse(
+                            book -> bookList.add(book), () -> bookList.add(postBook(similarISBN)));
+        }
+        List<SimilarBookInfo> similarBookList = bookList.stream().map(SimilarBookInfo::of).collect(Collectors.toList());
+        return new GetSimilarBookListRes(similarBookList);
+    }
 
     @Override
     public List<Book> getBookRecommendList(List<String> isbnList){
         List<Book> bookList = new ArrayList<>();
         List<String> recommendISBNList = getISBNListFromML(isbnList);
         for(String recommendISBN : recommendISBNList){
-            Book book = bookRepository.findById(recommendISBN).orElse(postBook(recommendISBN));
-            bookList.add(book);
+            bookRepository.findById(recommendISBN).ifPresentOrElse(
+                    book -> bookList.add(book), () -> bookList.add(postBook(recommendISBN)));
         }
         return bookList;
     }
