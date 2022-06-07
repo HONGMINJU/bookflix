@@ -37,6 +37,11 @@ public enum BaseResponseStatus {
      */
     REVIEW_NOT_EXIST(FAILED, 5000, "존재하지 않는 review입니다."),
     REVIEW_NOT_WRITER(FAILED, 5001, "해당 review에 대한 권한이 없습니다."),
+
+    /**
+     * 6000 : 서버 에러
+     */
+    SERVER_ERROR(FAILED, 6000, "서버 내부 에러."),
     ;
 
     private final BaseResponseResultStatus resultStatus;
