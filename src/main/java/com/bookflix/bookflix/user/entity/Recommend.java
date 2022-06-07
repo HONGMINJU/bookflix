@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Entity
 public class Recommend {
 
-    @Column(name = "HISTORY_ID")
+    @Column(name = "RECOMMEND_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     private Long id;

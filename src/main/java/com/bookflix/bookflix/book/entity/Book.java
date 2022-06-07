@@ -1,6 +1,9 @@
 package com.bookflix.bookflix.book.entity;
 
+import com.bookflix.bookflix.book.dto.externalDTO.bookInfo.BookDTO;
+import com.bookflix.bookflix.book.dto.externalDTO.bookInfo.BookInfoResponseDTO;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,4 +35,29 @@ public class Book {
 
     @Column(columnDefinition="TEXT", nullable = false)
     private String info;
+
+    @Builder
+    public Book(String isbn, String title, int year, String writer,
+                String publisher, String coverURL, String info){
+        this.id = isbn;
+        this.title = title;
+        this.year = year;
+        this.writer = writer;
+        this.publisher = publisher;
+        this.coverURL = coverURL;
+        this.info = info;
+    }
+
+    public static Book of(BookInfoResponseDTO bookInfoResponseDTO){
+        BookDTO bookDTO = bookInfoResponseDTO.getDetailDTO().getBookDTO();
+        return Book.builder()
+                .isbn(bookDTO.getIsbn13())
+                .title(bookDTO.getBookname())
+                .year(bookDTO.getPublication_year())
+                .writer(bookDTO.getAuthors())
+                .publisher(bookDTO.getPublisher())
+                .coverURL(bookDTO.getBookImageURL())
+                .info(bookDTO.getDescription())
+                .build();
+    }
 }

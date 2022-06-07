@@ -1,11 +1,9 @@
 package com.bookflix.bookflix.book.service;
 
+import com.bookflix.bookflix.book.dto.externalDTO.bookInfo.BookInfoResponseDTO;
 import com.bookflix.bookflix.book.dto.externalDTO.recommendList.ISBNListDTO;
-import com.bookflix.bookflix.book.dto.response.GetBookInfoRes;
-import com.bookflix.bookflix.book.dto.response.GetBookRes;
-import com.bookflix.bookflix.book.dto.response.LibraryInfo;
-import com.bookflix.bookflix.book.dto.response.SearchBookRes;
-import com.bookflix.bookflix.book.dto.externalDTO.haveInfo.responseDTO;
+import com.bookflix.bookflix.book.dto.response.*;
+import com.bookflix.bookflix.book.dto.externalDTO.haveInfo.HaveInfoResponseDTO;
 import com.bookflix.bookflix.book.entity.Book;
 import com.bookflix.bookflix.book.repository.BookRepository;
 import com.bookflix.bookflix.common.response.BaseException;
@@ -16,10 +14,8 @@ import com.bookflix.bookflix.user.entity.User;
 import com.bookflix.bookflix.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -46,7 +42,7 @@ public class BookServiceImpl implements BookService{
                 + "&libCode=" + Integer.toString(nearLibrary.getLibrary().getCode())
                 + "&isbn13="+isbn;
         RestTemplate restTemplate = new RestTemplate();
-        responseDTO responseDTO = restTemplate.getForObject(URL, responseDTO.class);
+        HaveInfoResponseDTO responseDTO = restTemplate.getForObject(URL, HaveInfoResponseDTO.class);
         boolean have = (responseDTO.getResultDTO().getHasBook().equals("Y")? true : false);
         boolean canBorrow = (responseDTO.getResultDTO().getLoanAvailable().equals("Y")? true : false);
         return LibraryInfo.of(nearLibrary, have, canBorrow);
@@ -85,10 +81,28 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
+    @Transactional
+    public Book postBook(String isbn){
+        System.out.println("isbn = " + isbn);
+        String URL = "http://data4library.kr/api/srchDtlList?authKey=" + APIKey + "&isbn13=" + isbn;
+        RestTemplate restTemplate = new RestTemplate();
+        BookInfoResponseDTO responseDTO = restTemplate.getForObject(URL, BookInfoResponseDTO.class);
+        return bookRepository.save(Book.of(responseDTO));
+    }
+
+//    @Override
+//    public GetSimilarBookListRes getSimilarBookList(List<String> isbnList){
+//
+//    }
+
+    @Override
     public List<Book> getBookRecommendList(List<String> isbnList){
         List<Book> bookList = new ArrayList<>();
         List<String> recommendISBNList = getISBNListFromML(isbnList);
-        // TODO : recommendISBNList 잘 되는 거 확인했음 => book list로 만들 차례임
+        for(String recommendISBN : recommendISBNList){
+            Book book = bookRepository.findById(recommendISBN).orElse(postBook(recommendISBN));
+            bookList.add(book);
+        }
         return bookList;
     }
 }

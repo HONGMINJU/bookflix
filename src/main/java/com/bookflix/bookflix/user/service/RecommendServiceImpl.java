@@ -7,6 +7,7 @@ import com.bookflix.bookflix.user.entity.User;
 import com.bookflix.bookflix.user.repository.RecommendRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 @RequiredArgsConstructor
@@ -18,6 +19,7 @@ public class RecommendServiceImpl implements RecommendService{
     private final BookService bookService;
 
     @Override
+    @Transactional
     public void clearRecommendList(User user){
         List<Recommend> recommendList = user.getRecommendList();
         for (Recommend recommend: recommendList)
@@ -26,12 +28,14 @@ public class RecommendServiceImpl implements RecommendService{
     }
 
     @Override
+    @Transactional
     public void setRecommendList(User user, List<String> isbnList){
         List<Book> bookList = bookService.getBookRecommendList(isbnList);
         clearRecommendList(user);
         for (Book book : bookList){
             Recommend recommend = recommendRepository.save(new Recommend(user, book));
             user.addRecommend(recommend);
+            System.out.println("recommend.getId() = " + recommend.getId());
         }
     }
 

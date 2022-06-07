@@ -16,6 +16,7 @@ import com.bookflix.bookflix.user.repository.HistoryRepository;
 import com.bookflix.bookflix.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,10 @@ public class HistoryServiceImpl implements HistoryService {
 
     private final ReviewRepository reviewRepository;
 
+    private final RecommendService recommendService;
+
     @Override
+    @Transactional
     public void createAndAddHistory(User user, String isbn){
         Book book = bookRepository.findById(isbn)
                 .orElseThrow(()-> new BaseException(BaseResponseStatus.BOOK_NOT_EXIST));
@@ -66,12 +70,15 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
+    @Transactional
     public void postReadHistory(Long userId, String isbn){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_EXIST));
         Book book = bookRepository.findById(isbn)
                 .orElseThrow(()-> new BaseException(BaseResponseStatus.BOOK_NOT_EXIST));
         History history = historyRepository.save(new History(user, book));
-        // TODO : 읽은 책 목록 수정했으니까 recommend refresh해야함
+        List<String> isbnList = historyRepository.findHistoriesByUserAndBookStatus(user, BookStatus.READ)
+                        .stream().map(History::getBook).map(Book::getId).collect(Collectors.toList());
+        recommendService.setRecommendList(user, isbnList);
     }
 }
