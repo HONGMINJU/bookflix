@@ -1,6 +1,8 @@
 package com.bookflix.bookflix.book.dto.externalDTO.haveInfo;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -10,13 +12,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @Getter
 @Setter
-@XmlRootElement(name = "response")
+@XmlRootElement(name = "result")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class responseDTO {
+public class HaveInfoResultDTO {
 
-    @XmlElement(name = "request")
-    private com.bookflix.bookflix.book.dto.externalDTO.haveInfo.requestDTO requestDTO;
+    @XmlElement(name = "hasBook")
+    private String hasBook;
 
-    @XmlElement(name = "result")
-    private com.bookflix.bookflix.book.dto.externalDTO.haveInfo.resultDTO resultDTO;
+    @XmlElement(name = "loanAvailable")
+    private String loanAvailable;
 }

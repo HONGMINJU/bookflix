@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Setter
 @XmlRootElement(name = "request")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class requestDTO {
+public class HaveInfoRequestDTO {
 
     @XmlElement(name = "isbn13")
     private String isbn13;
