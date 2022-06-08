@@ -10,5 +10,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetSimilarBookListRes {
-    List<SimilarBookInfo> bookList;
+    List<BookInfo> bookList;
 }

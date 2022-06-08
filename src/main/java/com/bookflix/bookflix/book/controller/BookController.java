@@ -6,6 +6,7 @@ import com.bookflix.bookflix.book.dto.response.SearchBookRes;
 import com.bookflix.bookflix.book.service.BookService;
 import com.bookflix.bookflix.common.response.BaseResponse;
 import com.bookflix.bookflix.common.service.JwtService;
+import com.bookflix.bookflix.user.service.RecommendService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,8 @@ public class BookController {
 
     private final BookService bookService;
 
+    private final RecommendService recommendService;
+
     private final JwtService jwtService;
 
     @GetMapping("")
@@ -29,7 +32,7 @@ public class BookController {
 
     @GetMapping("/similar")
     public BaseResponse<GetSimilarBookListRes> getSimilarBookList(@RequestBody Map<String, List<String>> isbnInfo){
-        return new BaseResponse<>(bookService.getSimilarBookList(isbnInfo.get("ISBNList")));
+        return new BaseResponse<>(recommendService.getSimilarBookList(isbnInfo.get("ISBNList")));
     }
 
     @GetMapping("/{isbn}")

@@ -4,15 +4,12 @@ import com.bookflix.bookflix.common.response.BaseResponseResultStatus;
 import com.bookflix.bookflix.common.response.BaseResponseStatus;
 import com.bookflix.bookflix.library.service.LibraryService;
 import com.bookflix.bookflix.user.dto.request.PutUserReq;
-import com.bookflix.bookflix.user.dto.response.GetBorrowHistoryRes;
-import com.bookflix.bookflix.user.dto.response.GetReadHistoryRes;
+import com.bookflix.bookflix.user.dto.response.*;
 import com.bookflix.bookflix.user.service.HistoryService;
 import com.bookflix.bookflix.common.response.BaseException;
 import com.bookflix.bookflix.common.response.BaseResponse;
 import com.bookflix.bookflix.common.service.JwtService;
 import com.bookflix.bookflix.user.dto.request.PostUserReq;
-import com.bookflix.bookflix.user.dto.response.GetUser;
-import com.bookflix.bookflix.user.dto.response.PostUserRes;
 import com.bookflix.bookflix.user.service.RecommendService;
 import com.bookflix.bookflix.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +29,10 @@ import static com.bookflix.bookflix.common.response.BaseResponseStatus.SUCCESS;
 @RequestMapping("/api/users")
 public class UserController {
 
+    private final JwtService jwtService;
     private final UserService userService;
     private final HistoryService historyService;
     private final RecommendService recommendService;
-    private final JwtService jwtService;
 
     @PostMapping("")
     public BaseResponse<PostUserRes> postUser(@Valid @RequestBody PostUserReq postUser) {
@@ -67,6 +64,14 @@ public class UserController {
         if (userId != id)
             throw new BaseException(INVALID_USERID);
         return new BaseResponse<>(historyService.getReadHistory(userId));
+    }
+
+    @GetMapping("/{id}/recommend")
+    public BaseResponse<GetRecommendList> getUserRecommendList(@PathVariable("id") Long id) {
+        Long userId = jwtService.getUserIdx();
+        if (userId != id)
+            throw new BaseException(INVALID_USERID);
+        return new BaseResponse<>(recommendService.getTotalRecommendList(userId));
     }
 
     @PostMapping("/{id}/books/read")

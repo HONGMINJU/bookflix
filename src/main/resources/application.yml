@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: bookflix-server
+  datasource:
+    url: jdbc:mysql://bookflix.cy98cwkgenp0.ap-northeast-2.rds.amazonaws.com:3306/bookflix
+    username: bookflix
+    password: bookflix
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+APIKey: ff0e9a559d63180536001fd0d99d87cdb4b60afa37b523525d432fb5bcfb6c97
