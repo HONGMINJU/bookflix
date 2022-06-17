@@ -40,8 +40,8 @@ public class BookServiceUtil {
                 + "&isbn13="+isbn;
         RestTemplate restTemplate = new RestTemplate();
         HaveInfoResponseDTO responseDTO = restTemplate.getForObject(URL, HaveInfoResponseDTO.class);
-        boolean have = (responseDTO.getResultDTO().getHasBook().equals("Y")? true : false);
-        boolean canBorrow = (responseDTO.getResultDTO().getLoanAvailable().equals("Y")? true : false);
+        boolean have = (responseDTO.getResultDTO().getHasBook().equals("Y"));
+        boolean canBorrow = (responseDTO.getResultDTO().getLoanAvailable().equals("Y"));
         return LibraryInfo.of(nearLibrary, have, canBorrow);
     }
 
