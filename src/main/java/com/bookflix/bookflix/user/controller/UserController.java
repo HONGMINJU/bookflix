@@ -83,6 +83,14 @@ public class UserController {
         return new BaseResponse<>(SUCCESS);
     }
 
+    @PostMapping("/{id}/inha/books")
+    public BaseResponse<List<String>> postInhaReadHistory(@PathVariable("id") Long id){
+        Long userId = jwtService.getUserIdx();
+        if (userId != id)
+            throw new BaseException(INVALID_USERID);
+        return new BaseResponse<>(historyService.postInhaReadHistory(id));
+    }
+
     @PutMapping("/{id}")
     public BaseResponse<BaseResponseResultStatus> updateUser(@PathVariable("id") Long id, @Valid @RequestBody PutUserReq putUserReq) {
         Long userId = jwtService.getUserIdx();
